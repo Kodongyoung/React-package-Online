@@ -1,7 +1,9 @@
-import React, { Profiler, memo } from "react";
+import React, { Profiler, memo, useState, useMemo } from "react";
 import "./CommentItem.css";
 
 function CommentItem({ title, content, likes, onClick }) {
+  const [clickCount, setClickCount] = useState(0);
+
   function onRenderCallback(
     id, // 방금 커밋된 Profiler 트리의 "id"
     phase, // "mount" (트리가 방금 마운트가 된 경우) 혹은 "update"(트리가 리렌더링된 경우)
@@ -17,12 +19,15 @@ function CommentItem({ title, content, likes, onClick }) {
 
   const handleClick = () => {
     onClick();
+    setClickCount((prev) => prev + 1);
     alert(`${title} 눌림`);
   };
 
-  const rate = () => {
+  const rate = useMemo(() => {
+    console.log("rate check");
     return likes > 10 ? "Good" : "Bad";
-  };
+  }, [likes]);
+
   return (
     <Profiler id="CommentItem" onRender={onRenderCallback}>
       <div className="CommentItem" onClick={handleClick}>
@@ -32,7 +37,9 @@ function CommentItem({ title, content, likes, onClick }) {
         <br />
         <span>{likes}</span>
         <br />
-        <span>{rate()}</span>
+        <span>{rate}</span>
+        <br />
+        <span>{clickCount}</span>
       </div>
     </Profiler>
   );
